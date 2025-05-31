@@ -216,13 +216,16 @@ class UXAnalyzer:
             session_id = event.get('session_id', 'unknown')
             sessions[session_id].append(event)
         
+        if not sessions:
+            return suggestions
+        
         # Analyze session patterns
         short_sessions = 0
         for session_events in sessions.values():
             if len(session_events) < 3:
                 short_sessions += 1
         
-        if short_sessions / len(sessions) > 0.5:
+        if len(sessions) > 0 and short_sessions / len(sessions) > 0.5:
             suggestions.append({
                 'type': 'user_flow',
                 'priority': 'medium',

@@ -153,6 +153,12 @@ def get_tracking_script():
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
+@app.route('/test-website')
+def test_website():
+    """Serve the test website for demo purposes"""
+    with open('test_website.html', 'r') as f:
+        return f.read()
+
 @app.route('/logout')
 def logout():
     """Logout and clear session"""

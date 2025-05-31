@@ -127,13 +127,32 @@
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <h3>No Data Yet</h3>
-                        <p>Start collecting data by adding our tracking script to your website.</p>
+                        <p>Start collecting data by adding our tracking script to your website, or try our demo site.</p>
+                        
+                        <div class="demo-options" style="display: flex; gap: 1rem; justify-content: center; margin: 2rem 0;">
+                            <a href="/test-website" target="_blank" class="btn-primary">
+                                <i class="fas fa-external-link-alt"></i>
+                                Try Demo Website
+                            </a>
+                        </div>
+                        
                         <div class="tracking-script-example">
-                            <h4>Add this script to your website:</h4>
+                            <h4>Integration for your website:</h4>
+                            <p style="margin-bottom: 1rem; color: #6b7280;">Add this script before the closing &lt;/body&gt; tag:</p>
                             <code>&lt;script src="{{ request.url_root }}tracking-script"&gt;&lt;/script&gt;</code>
                             <button onclick="copyToClipboard(this.previousElementSibling.textContent)" class="copy-btn">
-                                <i class="fas fa-copy"></i> Copy
+                                <i class="fas fa-copy"></i> Copy Script
                             </button>
+                            
+                            <div style="margin-top: 1.5rem; padding: 1rem; background: #f3f4f6; border-radius: 8px; text-align: left;">
+                                <h5 style="margin-bottom: 0.5rem;">Quick Start:</h5>
+                                <ol style="margin-left: 1.5rem; color: #4b5563;">
+                                    <li>Copy the script tag above</li>
+                                    <li>Paste it into your website's HTML</li>
+                                    <li>User interactions will automatically be tracked</li>
+                                    <li>Return here to view analytics and insights</li>
+                                </ol>
+                            </div>
                         </div>
                     </div>
                     {% endif %}
