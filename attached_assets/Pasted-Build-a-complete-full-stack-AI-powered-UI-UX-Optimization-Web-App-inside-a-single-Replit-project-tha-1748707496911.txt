@@ -1,0 +1,90 @@
+Build a complete full-stack AI-powered UI/UX Optimization Web App inside a single Replit project that includes frontend, backend, and ML logic.
+
+💡 Project Overview:
+A web app that:
+
+Tracks user interactions (clicks, scrolls, mouse movements) from any website using a JavaScript snippet
+
+Displays heatmaps and scroll maps
+
+Uses AI to generate actionable UX improvement suggestions
+
+All through a clean, web-based dashboard
+
+🧱 Structure It Like This:
+bash
+Copy
+Edit
+/ (root)
+│
+├── backend/
+│   ├── app.py  # Flask API to handle tracking data & ML
+│   ├── ml_model.py  # ML logic to analyze and suggest improvements
+│   ├── utils.py  # (optional) helper functions
+│   ├── requirements.txt
+│
+├── frontend/
+│   ├── index.html  # Login/landing page
+│   ├── dashboard.html  # UI for heatmap and suggestions
+│   ├── script.js  # Dashboard interactivity
+│   ├── style.css  # Clean UI styling
+│
+├── tracking/
+│   ├── tracking.js  # Lightweight script that websites embed to collect user behavior
+│
+├── README.md
+├── replit.nix (if needed)
+└── .replit (to define run command)
+⚙️ Tech Stack:
+Frontend: Vanilla JS + HTML/CSS (Replit-friendly)
+
+Backend: Python Flask
+
+Database: Use a JSON file or in-memory list (for Replit demo purposes)
+
+AI/ML: Python (with scikit-learn or rule-based logic for UX tips)
+
+✅ Features to Implement:
+Tracking Script (tracking/tracking.js)
+
+Records mouse clicks, scroll depth, and mouse movements
+
+Sends data to Flask backend using POST requests
+
+Backend (backend/app.py)
+
+/track-data endpoint to receive behavior data
+
+/analyze endpoint to return:
+
+Heatmap data
+
+Scroll map data
+
+AI-generated UX suggestions
+
+Use ml_model.py to cluster behavior and generate plain-language tips
+
+Frontend Dashboard
+
+Visualize heatmap (basic grid with color overlay)
+
+Show scroll-depth graph (simple bar chart or table)
+
+Panel to list AI-generated UX suggestions
+
+🚀 Replit Run Command:
+Configure .replit to run the Flask app:
+
+toml
+Copy
+Edit
+run = "python3 backend/app.py"
+🧠 AI Suggestions (in ml_model.py):
+Use a simple rule-based engine or clustering:
+
+If few clicks on a button → “Move CTA button higher”
+
+If users don’t scroll far → “Shorten long pages”
+
+If hover but no clicks → “Improve clarity of links”
