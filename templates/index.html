@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UX Analytics Pro - AI-Powered Website Optimization</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="landing-page">
+    <div class="hero-section">
+        <div class="container">
+            <header class="hero-header">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>UX Analytics Pro</span>
+                </div>
+                <nav class="hero-nav">
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#demo" class="nav-link">Demo</a>
+                    <a href="#pricing" class="nav-link">Pricing</a>
+                </nav>
+            </header>
+
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    AI-Powered Website Optimization
+                    <span class="gradient-text">Made Simple</span>
+                </h1>
+                <p class="hero-description">
+                    Track user behavior, visualize interactions with heatmaps, and get actionable AI-powered suggestions to optimize your website's UX and boost conversions.
+                </p>
+                
+                <div class="hero-features">
+                    <div class="feature-badge">
+                        <i class="fas fa-fire"></i>
+                        Real-time Heatmaps
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-brain"></i>
+                        AI Suggestions
+                    </div>
+                    <div class="feature-badge">
+                        <i class="fas fa-chart-bar"></i>
+                        Scroll Analytics
+                    </div>
+                </div>
+
+                <div class="cta-section">
+                    <div class="demo-access">
+                        <h3>Try the Demo Dashboard</h3>
+                        <p>Enter the demo key to explore our analytics dashboard</p>
+                        
+                        {% if request.args.get('error') == 'invalid_key' %}
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Invalid demo key. Try: "demo", "test", or "admin"
+                        </div>
+                        {% endif %}
+                        
+                        <form method="POST" action="{{ url_for('authenticate') }}" class="demo-form">
+                            <div class="input-group">
+                                <input type="text" 
+                                       name="demo_key" 
+                                       placeholder="Enter demo key (demo, test, or admin)" 
+                                       class="demo-input"
+                                       required>
+                                <button type="submit" class="demo-button">
+                                    <i class="fas fa-arrow-right"></i>
+                                    Access Dashboard
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div class="demo-hint">
+                            <i class="fas fa-info-circle"></i>
+                            Demo keys: <code>demo</code>, <code>test</code>, or <code>admin</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2 class="section-title">Powerful Analytics Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mouse-pointer"></i>
+                    </div>
+                    <h3>Click Tracking</h3>
+                    <p>Track every click and interaction on your website with pixel-perfect accuracy. Understand what users click and what they ignore.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3>Heatmap Visualization</h3>
+                    <p>See where users click, move, and scroll with beautiful heatmap visualizations. Identify hot spots and dead zones instantly.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-scroll"></i>
+                    </div>
+                    <h3>Scroll Analysis</h3>
+                    <p>Understand how far users scroll on your pages. Optimize content placement and reduce bounce rates with scroll depth insights.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI Recommendations</h3>
+                    <p>Get actionable UX improvement suggestions powered by machine learning. Our AI analyzes patterns and recommends optimizations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Real-time Analytics</h3>
+                    <p>Monitor user behavior in real-time with live dashboards. Make data-driven decisions as users interact with your site.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Easy Integration</h3>
+                    <p>Add our lightweight tracking script to any website. No complex setup required - start collecting data in minutes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo" class="demo-section">
+        <div class="container">
+            <h2 class="section-title">See It In Action</h2>
+            <div class="demo-preview">
+                <div class="demo-image">
+                    <img src="https://pixabay.com/get/g0496b74f9d552f43fdcf2af1f91dd615bf16546596a641ec94bba45ee3be2d1e23b1f6e914ff276844a956d6f777aa70e3d117487094c760db564195e5a1ba06_1280.jpg" 
+                         alt="Analytics Dashboard Preview" 
+                         class="dashboard-preview">
+                </div>
+                <div class="demo-content">
+                    <h3>Professional Analytics Dashboard</h3>
+                    <ul class="demo-features">
+                        <li><i class="fas fa-check"></i> Interactive heatmap overlays</li>
+                        <li><i class="fas fa-check"></i> Scroll depth visualization</li>
+                        <li><i class="fas fa-check"></i> AI-powered insights</li>
+                        <li><i class="fas fa-check"></i> Export and reporting tools</li>
+                        <li><i class="fas fa-check"></i> Real-time data updates</li>
+                    </ul>
+                    <a href="#" class="demo-cta" onclick="document.querySelector('.demo-input').focus()">
+                        Try Demo Now <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="integration-section">
+        <div class="container">
+            <h2 class="section-title">Easy Integration</h2>
+            <div class="integration-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Add Tracking Script</h3>
+                    <p>Copy our lightweight JavaScript snippet to your website</p>
+                    <div class="code-example">
+                        <code>&lt;script src="/tracking-script"&gt;&lt;/script&gt;</code>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Start Collecting Data</h3>
+                    <p>User interactions are automatically tracked and analyzed</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>View Insights</h3>
+                    <p>Access your dashboard to see heatmaps and AI recommendations</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <i class="fas fa-chart-line"></i>
+                        <span>UX Analytics Pro</span>
+                    </div>
+                    <p>AI-powered website optimization made simple</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#demo">Demo</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/tracking-script">Tracking Script</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API Reference</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Status</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 UX Analytics Pro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
