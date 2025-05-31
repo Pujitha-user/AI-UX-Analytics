@@ -3,17 +3,42 @@ import json
 import logging
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
 from ml_model import UXAnalyzer
-from utils import load_tracking_data, save_tracking_data, validate_tracking_data
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
+class Base(DeclarativeBase):
+    pass
+
+db = SQLAlchemy(model_class=Base)
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "your-secret-key-here")
 
+# Configure database
+database_url = os.environ.get("DATABASE_URL")
+if not database_url:
+    raise RuntimeError("DATABASE_URL environment variable is not set")
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_recycle": 300,
+    "pool_pre_ping": True,
+}
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
+
 # Initialize UX analyzer
 ux_analyzer = UXAnalyzer()
+
+# Import database utilities and models
+from db_utils import (
+    validate_tracking_data, save_tracking_event, get_tracking_data,
+    get_analytics_summary, get_export_data
+)
 
 @app.route('/')
 def index():
@@ -26,15 +51,15 @@ def dashboard():
     if 'authenticated' not in session:
         return redirect(url_for('index'))
     
-    # Load tracking data for dashboard
-    tracking_data = load_tracking_data()
+    # Import models
+    from models import TrackingEvent, AnalyticsSession
     
-    # Get analytics summary
-    analytics_summary = ux_analyzer.get_analytics_summary(tracking_data)
+    # Get analytics summary from database
+    analytics_summary = get_analytics_summary(db, TrackingEvent, AnalyticsSession)
     
     return render_template('dashboard.html', 
                          analytics=analytics_summary,
-                         total_sessions=len(tracking_data))
+                         total_sessions=analytics_summary['unique_sessions'])
 
 @app.route('/authenticate', methods=['POST'])
 def authenticate():
@@ -55,22 +80,23 @@ def track_data():
         if not validate_tracking_data(data):
             return jsonify({'error': 'Invalid tracking data'}), 400
         
-        # Add timestamp and session info
-        data['timestamp'] = datetime.utcnow().isoformat()
-        data['session_id'] = data.get('session_id', 'unknown')
+        # Add timestamp if not present
+        if 'timestamp' not in data:
+            data['timestamp'] = datetime.utcnow().isoformat()
         
-        # Load existing data
-        tracking_data = load_tracking_data()
+        # Ensure session_id is present
+        if 'session_id' not in data:
+            data['session_id'] = 'unknown'
         
-        # Add new data point
-        tracking_data.append(data)
+        # Import models
+        from models import TrackingEvent, AnalyticsSession
         
-        # Save updated data
-        save_tracking_data(tracking_data)
-        
-        logging.info(f"Tracked event: {data.get('event_type')} from {data.get('url')}")
-        
-        return jsonify({'status': 'success'})
+        # Save to database
+        if save_tracking_event(db, TrackingEvent, AnalyticsSession, data):
+            logging.info(f"Tracked event: {data.get('event_type')} from {data.get('url')}")
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'error': 'Failed to save tracking data'}), 500
         
     except Exception as e:
         logging.error(f"Error tracking data: {str(e)}")
