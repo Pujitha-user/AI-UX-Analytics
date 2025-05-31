@@ -93,7 +93,7 @@ def save_tracking_event(db, TrackingEvent, AnalyticsSession, data):
         db.session.rollback()
         return False
 
-def get_tracking_data(db, TrackingEvent, limit=None, days_back=30):
+def get_tracking_data(db, TrackingEvent, limit=None, days_back=None):
     """Get tracking data from database"""
     try:
         query = TrackingEvent.query
@@ -214,7 +214,7 @@ def get_export_data(db, TrackingEvent, AnalyticsSession):
     """Get all data for export"""
     try:
         # Get all tracking events
-        events = get_tracking_data(db, TrackingEvent, limit=None, days_back=None)
+        events = get_tracking_data(db, TrackingEvent, limit=None)
         
         # Get all sessions
         sessions = AnalyticsSession.query.all()

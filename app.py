@@ -109,7 +109,8 @@ def get_heatmap_data():
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
-        tracking_data = load_tracking_data()
+        from models import TrackingEvent, AnalyticsSession
+        tracking_data = get_tracking_data(db, TrackingEvent)
         heatmap_data = ux_analyzer.generate_heatmap_data(tracking_data)
         return jsonify(heatmap_data)
     except Exception as e:
@@ -123,7 +124,8 @@ def get_scroll_data():
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
-        tracking_data = load_tracking_data()
+        from models import TrackingEvent, AnalyticsSession
+        tracking_data = get_tracking_data(db, TrackingEvent)
         scroll_data = ux_analyzer.analyze_scroll_behavior(tracking_data)
         return jsonify(scroll_data)
     except Exception as e:
@@ -137,7 +139,8 @@ def get_ux_suggestions():
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
-        tracking_data = load_tracking_data()
+        from models import TrackingEvent, AnalyticsSession
+        tracking_data = get_tracking_data(db, TrackingEvent)
         suggestions = ux_analyzer.generate_suggestions(tracking_data)
         return jsonify({'suggestions': suggestions})
     except Exception as e:
@@ -151,12 +154,9 @@ def export_data():
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
-        tracking_data = load_tracking_data()
-        return jsonify({
-            'data': tracking_data,
-            'exported_at': datetime.utcnow().isoformat(),
-            'total_events': len(tracking_data)
-        })
+        from models import TrackingEvent, AnalyticsSession
+        export_data = get_export_data(db, TrackingEvent, AnalyticsSession)
+        return jsonify(export_data)
     except Exception as e:
         logging.error(f"Error exporting data: {str(e)}")
         return jsonify({'error': 'Failed to export data'}), 500
@@ -192,11 +192,9 @@ def logout():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    # Ensure data directory exists
-    os.makedirs('data', exist_ok=True)
-    
-    # Initialize empty tracking data if file doesn't exist
-    if not os.path.exists('data/tracking_data.json'):
-        save_tracking_data([])
+    # Initialize database tables
+    with app.app_context():
+        from models import TrackingEvent, AnalyticsSession
+        db.create_all()
     
     app.run(host='0.0.0.0', port=5000, debug=True)
