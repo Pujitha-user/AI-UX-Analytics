@@ -2,7 +2,7 @@
 
 A complete full-stack web application that tracks user interactions, generates heatmaps, analyzes scroll behavior, and provides AI-powered UX improvement suggestions.
 
-## 🚀 Features
+##  Features
 
 - **Real-time User Tracking**: Capture clicks, scrolls, mouse movements, and page views
 - **Interactive Heatmaps**: Visualize user interaction patterns with beautiful heatmap overlays
@@ -12,7 +12,7 @@ A complete full-stack web application that tracks user interactions, generates h
 - **Easy Integration**: Lightweight tracking script for any website
 - **Data Export**: Download analytics data for further analysis
 
-## 🛠 Technology Stack
+##  Technology Stack
 
 ### Backend
 - **Flask**: Python web framework for API and web interface
@@ -32,7 +32,7 @@ A complete full-stack web application that tracks user interactions, generates h
 - **XMLHttpRequest/Fetch API**: Real-time data transmission
 - **Local Storage**: Session management
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 DataHarvesterPro/
@@ -68,7 +68,7 @@ DataHarvesterPro/
     └── QUICK_REFERENCE.md      # Quick start guide
 ```
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 - Python 3.10+
@@ -106,7 +106,7 @@ python app.py
 
 The application will be available at `http://localhost:5000`
 
-## 🔐 Authentication
+##  Authentication
 
 ### Default Demo Keys
 - `demo` - Demo account
@@ -115,7 +115,7 @@ The application will be available at `http://localhost:5000`
 
 Simply enter any of these keys on the login page to access the dashboard.
 
-## 📊 How It Works
+##  How It Works
 
 ### 1. **Tracking System**
 - Lightweight JavaScript tracker captures user interactions
@@ -143,7 +143,7 @@ Simply enter any of these keys on the login page to access the dashboard.
 - Includes charts, heatmaps, and recommendations
 - PDF-ready formatting
 
-## 🔧 API Endpoints
+##  API Endpoints
 
 ### Authentication
 - `POST /login` - Authenticate with demo key
@@ -178,7 +178,7 @@ The tracker captures:
 - Mouse movements
 - Session duration
 
-## 🧪 Testing
+##  Testing
 
 Run the comprehensive test suite:
 
@@ -187,18 +187,18 @@ python test_app.py
 ```
 
 Test categories:
-- ✅ Landing page rendering
-- ✅ Authentication flow
-- ✅ Dashboard access
-- ✅ API endpoints
-- ✅ Tracking functionality
-- ✅ Static file serving
-- ✅ Logout functionality
-- ✅ Data persistence
+-  Landing page rendering
+-  Authentication flow
+-  Dashboard access
+-  API endpoints
+-  Tracking functionality
+-  Static file serving
+-  Logout functionality
+-  Data persistence
 
 All 43 tests passing with 100% success rate.
 
-## 📋 Database Schema
+##  Database Schema
 
 ### TrackingEvent
 - `id`: Primary key
@@ -216,7 +216,7 @@ All 43 tests passing with 100% success rate.
 - `event_count`: Total events in session
 - `pages_visited`: Unique pages visited
 
-## 🔄 Environment Variables
+##  Environment Variables
 
 Create `.env` file from `.env.example`:
 
@@ -225,14 +225,14 @@ SESSION_SECRET=your-secret-key-here
 DATABASE_URL=sqlite:///local.db
 ```
 
-## 📝 Documentation
+##  Documentation
 
 - **[HOW_TRACKING_WORKS.md](HOW_TRACKING_WORKS.md)** - Detailed tracking system guide
 - **[PROJECT_SETUP_REPORT.md](PROJECT_SETUP_REPORT.md)** - Complete setup documentation
 - **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Quick start reference
 - **[COMPLETION_REPORT.md](COMPLETION_REPORT.md)** - Project completion summary
 
-## 🎯 Key Features Explained
+##  Key Features Explained
 
 ### Real-time Tracking
 - Non-blocking tracking requests
@@ -254,7 +254,7 @@ DATABASE_URL=sqlite:///local.db
 - Downloadable analytics data
 - Chart and visualization export
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 **Dashboard not loading after login?**
 - Clear browser cache and cookies
@@ -271,7 +271,7 @@ DATABASE_URL=sqlite:///local.db
 - Check browser console for errors
 - Verify localStorage has sufficient space
 
-## 📦 Dependencies
+##  Dependencies
 
 - Flask 3.1.2 - Web framework
 - SQLAlchemy 3.1.1 - ORM
@@ -283,7 +283,7 @@ DATABASE_URL=sqlite:///local.db
 
 See `requirements.txt` for complete list with versions.
 
-## 🚀 Deployment
+##  Deployment
 
 ### Local Development
 ```bash
@@ -300,24 +300,16 @@ gunicorn --bind 0.0.0.0:5000 app:app
 2. Set `DATABASE_URL` for PostgreSQL if needed
 3. Set `FLASK_ENV=production`
 
-## 📄 License
+##  License
 
 This project is open source and available under the MIT License.
 
-## 👤 Author
+##  Author
 
 Created as an AI-powered UX Analytics platform for website optimization and user behavior analysis.
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📞 Support
 
-For documentation and guides, see the [Documentation](#-documentation) section above.
-
----
-
-**Last Updated**: February 2026  
-**Status**: Production Ready ✅  
-**Repository**: [GitHub](https://github.com/Pujitha-user/AI-UX-Analytics)
