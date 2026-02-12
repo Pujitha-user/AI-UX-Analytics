@@ -16,14 +16,24 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "your-secret-key-here")
+app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production-12345")
+
+# Session configuration
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Configure database
 database_url = os.environ.get("DATABASE_URL")
 if not database_url:
-    raise RuntimeError("DATABASE_URL environment variable is not set")
+   # Use SQLite for local development
+   database_url = "sqlite:///local.db"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
@@ -96,11 +106,12 @@ def track_data():
             logging.info(f"Tracked event: {data.get('event_type')} from {data.get('url')}")
             return jsonify({'status': 'success'})
         else:
+            logging.error(f"Failed to save tracking event: {data}")
             return jsonify({'error': 'Failed to save tracking data'}), 500
         
     except Exception as e:
-        logging.error(f"Error tracking data: {str(e)}")
-        return jsonify({'error': 'Failed to track data'}), 500
+        logging.error(f"Error tracking data: {str(e)}", exc_info=True)
+        return jsonify({'error': f'Failed to track data: {str(e)}'}), 500
 
 @app.route('/api/heatmap-data')
 def get_heatmap_data():
@@ -179,11 +190,42 @@ def get_tracking_script():
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
+@app.route('/api/generate-report')
+def generate_report():
+    """Generate a comprehensive analytics report"""
+    if 'authenticated' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        from models import TrackingEvent, AnalyticsSession
+        
+        # Gather all data for the report
+        export_data = get_export_data(db, TrackingEvent, AnalyticsSession)
+        tracking_data = get_tracking_data(db, TrackingEvent)
+        heatmap_data = ux_analyzer.generate_heatmap_data(tracking_data)
+        scroll_data = ux_analyzer.analyze_scroll_behavior(tracking_data)
+        suggestions = ux_analyzer.generate_suggestions(tracking_data)
+        
+        report_data = {
+            'export_data': export_data,
+            'heatmap_data': heatmap_data,
+            'scroll_data': scroll_data,
+            'suggestions': suggestions,
+            'generated_at': datetime.utcnow().isoformat()
+        }
+        
+        return jsonify(report_data)
+    except Exception as e:
+        logging.error(f"Error generating report: {str(e)}")
+        return jsonify({'error': 'Failed to generate report'}), 500
+
 @app.route('/test-website')
 def test_website():
     """Serve the test website for demo purposes"""
-    with open('test_website.html', 'r') as f:
-        return f.read()
+    """with open('test_website.html', 'r') as f:
+        return f.read()"""
+    return app.send_static_file('test_website.html')
+
 
 @app.route('/logout')
 def logout():

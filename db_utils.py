@@ -70,10 +70,18 @@ def save_tracking_event(db, TrackingEvent, AnalyticsSession, data):
                     session_id=session_id,
                     user_agent=data.get('user_agent'),
                     initial_referrer=data.get('referrer'),
-                    initial_url=data.get('url')
+                    initial_url=data.get('url'),
+                    event_count=0,
+                    pages_visited=0
                 )
                 db.session.add(session)
             
+            # Ensure event_count is not None
+            if session.event_count is None:
+                session.event_count = 0
+            if session.pages_visited is None:
+                session.pages_visited = 0
+                
             session.last_seen = datetime.utcnow()
             session.event_count = session.event_count + 1
             

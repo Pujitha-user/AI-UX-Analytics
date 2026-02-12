@@ -413,8 +413,206 @@ async function exportData(format) {
 }
 
 // Generate report
-function generateReport() {
-    alert('Report generation feature coming soon!');
+async function generateReport() {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'flex';
+    }
+    
+    try {
+        // Fetch all necessary data
+        const [exportResponse, heatmapResponse, scrollResponse, suggestionsResponse] = await Promise.all([
+            fetch('/api/export-data'),
+            fetch('/api/heatmap-data'),
+            fetch('/api/scroll-data'),
+            fetch('/api/suggestions')
+        ]);
+        
+        if (!exportResponse.ok) throw new Error('Failed to fetch report data');
+        
+        const exportData = await exportResponse.json();
+        const heatmapData = await heatmapResponse.json();
+        const scrollData = await scrollResponse.json();
+        const suggestionsData = await suggestionsResponse.json();
+        
+        // Generate HTML report
+        const reportHTML = generateReportHTML(exportData, heatmapData, scrollData, suggestionsData);
+        
+        // Create and download report
+        const blob = new Blob([reportHTML], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ux-analytics-report-${new Date().toISOString().split('T')[0]}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        alert('Report generated successfully! Check your downloads.');
+        
+    } catch (error) {
+        console.error('Error generating report:', error);
+        alert('Failed to generate report. Please try again.');
+    } finally {
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'none';
+        }
+    }
+}
+
+// Generate HTML report content
+function generateReportHTML(exportData, heatmapData, scrollData, suggestionsData) {
+    const reportDate = new Date().toLocaleDateString();
+    const reportTime = new Date().toLocaleTimeString();
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UX Analytics Report - ${reportDate}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+               line-height: 1.6; color: #333; padding: 40px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; 
+                     padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2563eb; margin-bottom: 10px; font-size: 2.5em; }
+        h2 { color: #1e40af; margin-top: 30px; margin-bottom: 15px; 
+             padding-bottom: 10px; border-bottom: 2px solid #e5e7eb; }
+        h3 { color: #3b82f6; margin-top: 20px; margin-bottom: 10px; }
+        .header { margin-bottom: 40px; }
+        .metadata { color: #6b7280; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+                      gap: 20px; margin: 20px 0; }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                     color: white; padding: 25px; border-radius: 8px; }
+        .stat-value { font-size: 2.5em; font-weight: bold; margin-bottom: 5px; }
+        .stat-label { font-size: 1em; opacity: 0.9; }
+        .suggestion-card { background: #f9fafb; padding: 20px; margin: 15px 0; 
+                          border-left: 4px solid #3b82f6; border-radius: 4px; }
+        .priority-high { border-left-color: #ef4444; }
+        .priority-medium { border-left-color: #f59e0b; }
+        .priority-low { border-left-color: #10b981; }
+        .priority-badge { display: inline-block; padding: 4px 12px; border-radius: 4px; 
+                         font-size: 0.875em; font-weight: 600; margin-bottom: 10px; }
+        .priority-high .priority-badge { background: #fee2e2; color: #991b1b; }
+        .priority-medium .priority-badge { background: #fef3c7; color: #92400e; }
+        .priority-low .priority-badge { background: #d1fae5; color: #065f46; }
+        ul { margin-left: 20px; margin-top: 10px; }
+        li { margin: 8px 0; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; 
+                 color: #6b7280; text-align: center; font-size: 0.875em; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { background: #f9fafb; font-weight: 600; color: #374151; }
+        .insight { background: #eff6ff; padding: 15px; border-radius: 6px; 
+                  margin: 15px 0; border-left: 3px solid #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 UX Analytics Report</h1>
+            <div class="metadata">
+                <p>Generated on: ${reportDate} at ${reportTime}</p>
+                <p>Report Period: All time</p>
+            </div>
+        </div>
+
+        <h2>Executive Summary</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">${exportData.total_events || 0}</div>
+                <div class="stat-label">Total Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${exportData.unique_sessions || 0}</div>
+                <div class="stat-label">Unique Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${heatmapData.total_clicks || 0}</div>
+                <div class="stat-label">Total Clicks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${scrollData.average_depth || 0}%</div>
+                <div class="stat-label">Avg Scroll Depth</div>
+            </div>
+        </div>
+
+        <h2>Click Analysis</h2>
+        <div class="insight">
+            <p><strong>Total Clicks:</strong> ${heatmapData.total_clicks || 0}</p>
+            <p><strong>Click Clusters:</strong> ${heatmapData.clusters || 0} hotspot areas identified</p>
+            <p><strong>Key Finding:</strong> ${heatmapData.clusters > 5 ? 'High engagement with multiple interaction points' : 'Limited interaction areas - consider improving call-to-action visibility'}</p>
+        </div>
+
+        <h2>Scroll Behavior Analysis</h2>
+        <div class="insight">
+            <p><strong>Average Scroll Depth:</strong> ${scrollData.average_depth || 0}%</p>
+            <p><strong>Maximum Scroll Depth:</strong> ${scrollData.max_depth || 0}%</p>
+            <p><strong>Bounce Rate:</strong> ${scrollData.bounce_rate || 0}%</p>
+            <p><strong>Key Finding:</strong> ${scrollData.average_depth > 70 ? 'Excellent content engagement' : scrollData.average_depth > 40 ? 'Moderate engagement - consider improving content above the fold' : 'Low engagement - critical content may not be visible'}</p>
+        </div>
+
+        <h2>AI-Powered UX Suggestions</h2>
+        ${suggestionsData.suggestions && suggestionsData.suggestions.length > 0 ? 
+            suggestionsData.suggestions.map(suggestion => `
+                <div class="suggestion-card priority-${suggestion.priority}">
+                    <span class="priority-badge">${suggestion.priority.toUpperCase()} PRIORITY</span>
+                    <h3>${suggestion.title}</h3>
+                    <p>${suggestion.description}</p>
+                    <ul>
+                        ${suggestion.actionable_tips.map(tip => `<li>${tip}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('') : 
+            '<p>No suggestions available yet. Collect more data to receive AI-powered insights.</p>'
+        }
+
+        <h2>Event Type Distribution</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Event Type</th>
+                    <th>Count</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${Object.entries(exportData.event_summary || {}).map(([type, count]) => `
+                    <tr>
+                        <td>${type.charAt(0).toUpperCase() + type.slice(1)}</td>
+                        <td>${count}</td>
+                        <td>${exportData.total_events > 0 ? Math.round((count / exportData.total_events) * 100) : 0}%</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+
+        <h2>Session Insights</h2>
+        <div class="insight">
+            <p><strong>Total Sessions:</strong> ${exportData.unique_sessions || 0}</p>
+            <p><strong>Average Events per Session:</strong> ${exportData.unique_sessions > 0 ? Math.round(exportData.total_events / exportData.unique_sessions) : 0}</p>
+            <p><strong>User Engagement:</strong> ${exportData.unique_sessions > 10 ? 'High - Strong user base' : exportData.unique_sessions > 3 ? 'Moderate - Growing audience' : 'Low - Consider marketing efforts'}</p>
+        </div>
+
+        <h2>Recommendations</h2>
+        <ul>
+            <li><strong>Data Collection:</strong> ${exportData.total_events < 100 ? 'Continue collecting data for more accurate insights' : 'Sufficient data collected for analysis'}</li>
+            <li><strong>Click Optimization:</strong> ${heatmapData.total_clicks < 50 ? 'Improve call-to-action visibility and button placement' : 'Good click engagement observed'}</li>
+            <li><strong>Content Strategy:</strong> ${scrollData.average_depth < 50 ? 'Prioritize above-the-fold content optimization' : 'Content engagement is strong'}</li>
+            <li><strong>Session Length:</strong> ${exportData.unique_sessions > 0 && (exportData.total_events / exportData.unique_sessions) > 5 ? 'Users are highly engaged with your content' : 'Work on increasing session engagement'}</li>
+        </ul>
+
+        <div class="footer">
+            <p>This report was automatically generated by UX Analytics Pro</p>
+            <p>For more detailed analysis, visit your dashboard at http://localhost:5000/dashboard</p>
+        </div>
+    </div>
+</body>
+</html>`;
 }
 
 // Toggle heatmap mode
